@@ -8,7 +8,7 @@ Software Engineering for Embedded Applications
 
 #### Note: To avoid committing compiled objects to github, you should make the following .gitignore file in the root of your repo (i.e. in 520_Assignments):
 
-bin/
+bin/ \\
 build/
 html/
 latex/
