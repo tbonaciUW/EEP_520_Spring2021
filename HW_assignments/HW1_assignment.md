@@ -69,4 +69,4 @@ Note that you will need to edit the Makefile to include the header and source fi
 
 Remember, we will compile your code against our own tests, so be sure to name your functions and struct members exactly as specified here and to test edges cases.
 
-Note: Your hw_1 directory should have two separate sub-directories: fractions and complex, which with their own code amd Makefile. You can copy Makefile, main.c, and unit_tests.h from fractions to complex initially. You will need to edit the Makefile to change the word fractions to the word complex. And you will need to replace the tests in unit_test.h with your own tests.
+Note: Your hw_1 directory should have one  sub-directory - complex, with its own code and Makefile. You can copy Makefile, main.c, and unit_tests.h from fractions to complex initially. You will need to edit the Makefile to change the word fractions to the word complex. And you will need to replace the tests in unit_test.h with your own tests.
