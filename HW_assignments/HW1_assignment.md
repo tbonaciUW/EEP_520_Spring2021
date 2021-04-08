@@ -4,7 +4,7 @@ Software Engineering for Embedded Applications
 
 ## HW1 Assignment
 
-### Due by 11:59pm PT on Sunday, April 11th, 2021 using Canvas and your private GitHub repos
+### Due by 11:59pm PT on Sunday, April 18th, 2021 using Canvas and your private GitHub repos
 
 Note: To avoid committing compiled objects to github, you should include the following extensions into a .gitignore file in the root of your repo (i.e. in 520_Assignments):
 
