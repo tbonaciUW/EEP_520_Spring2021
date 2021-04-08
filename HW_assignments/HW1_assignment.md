@@ -4,18 +4,18 @@ Software Engineering for Embedded Applications
 
 ## HW1 Assignment
 
-### Due by 11:59pm PT on Sunday, April 11th, 2021 using Canvas and your private GitHub repos
+### Due by 11:59pm PT on Sunday, April 18th, 2021 using Canvas and your private GitHub repos
 
-#### Note: To avoid committing compiled objects to github, you should make the following .gitignore file in the root of your repo (i.e. in 520_Assignments):
+Note: To avoid committing compiled objects to github, you should include the following extensions into a .gitignore file in the root of your repo (i.e. in 520_Assignments):
 
-bin/
-build/
-html/
-latex/
-tmp/
-~\*
-_.o
-_.a
+- bin/ 
+- build/
+- html/
+- latex/
+- tmp/
+- ~\*
+- _.o
+- _.a
 
 Within your private Github repository called `520-Assignments`, please make a new directory called `hw_1`.
 
@@ -57,9 +57,9 @@ Make a new directory in your `hw_1` directory called `complex`. Make a header fi
 
 Next, make a source file called `complex.c` and put the definitions of the functions into it. For the magnitude function you will need a square root function, which can be obtained by adding the C math library as follows:
 
-    ```c
-    #include <math.h>
-    ```
+`
+ #include <math.h>
+ `
 
 at the top of your `complex.c` file. The function itself is called `sqrt` and takes one argument.
 
