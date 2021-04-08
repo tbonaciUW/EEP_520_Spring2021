@@ -57,9 +57,9 @@ Make a new directory in your `hw_1` directory called `complex`. Make a header fi
 
 Next, make a source file called `complex.c` and put the definitions of the functions into it. For the magnitude function you will need a square root function, which can be obtained by adding the C math library as follows:
 
-    ```c
-    #include <math.h>
-    ```
+`c
+ #include <math.h>
+ `
 
 at the top of your `complex.c` file. The function itself is called `sqrt` and takes one argument.
 
