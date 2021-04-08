@@ -6,7 +6,7 @@ Software Engineering for Embedded Applications
 
 ### Due by 11:59pm PT on Sunday, April 11th, 2021 using Canvas and your private GitHub repos
 
-Note: To avoid committing compiled objects to github, you should make the following .gitignore file in the root of your repo (i.e. in 520_Assignments):
+Note: To avoid committing compiled objects to github, you should include the following extensions into a .gitignore file in the root of your repo (i.e. in 520_Assignments):
 
 - bin/ 
 - build/
