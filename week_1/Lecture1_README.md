@@ -432,9 +432,3 @@ make spotless
 ```
 to really clean up.
 
-Makefile Details
-===
-
-Exercises
-===
-To be added
