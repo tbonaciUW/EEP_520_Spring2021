@@ -8,8 +8,8 @@ Modern embedded systems programming starts with the hardware and extends all the
 
 - **Instructor**: Tamara Bonaci (tbonaci@uw.edu)
     - Office hour: Saturdays 9-10am using UW Zoom
-- **TA**: Trung Le
-    - Office hours: TBA
+- **TA**: Trung Le (tle45@uw.edu)
+    - Office hours: Mondays 6-7pm using UW Zoom
 
 Today
 ---
@@ -20,7 +20,7 @@ Syllabus
 ===
 - Week 1: Build environment and course overview
 - Week 2: C syntax and data types
-- Week 3: Abstract Data Types
+- Week 3: The C programming language II - dynamic arrays. Abstract Data Types
 - Week 4: Fundamentals of C++ and object oriented programming
 - Week 5: The C++ Standard Template Library
 - Week 6: STL II
@@ -51,7 +51,7 @@ Resources
 
 Build Environment
 ===
-- To keep track of and share code, we will use Github
+- To keep track of, and share code, we will use Github
 - To unify our build environment, we will use Docker
     - UNIX environment
     - bash shell
@@ -64,7 +64,7 @@ Code Editor
 
 - A very good editor for the C and C++ code we will write.
 - Free: [https://code.visualstudio.com/](https://code.visualstudio.com/)
-- Has Syntax highlighting, autocomplete, extensions.
+- Has syntax highlighting, autocomplete, extensions.
 - Other editors we like: Atom, Sublime.
 - You might like vim, emacs – but we expect you know how to use them.
 - Avoid: Xcode, Visual Studio, etc.
@@ -84,7 +84,6 @@ Git
 Github Accounts
 ===
 - Make an account (if you don't have one) [here](https://github.com/join?source=header-home).
-- Go [here](???) and add your name and account id to the list (so we can grade your homework).
 
 Installing Git
 ===
