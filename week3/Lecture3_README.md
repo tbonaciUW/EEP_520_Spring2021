@@ -6,9 +6,9 @@
 
 Last week, we (re)introduced the C language. Today, we'll continue exploring C programming language, to make a simple application. We will then talk about dynamic allocation and dynamic arrays in C. Finally, we will talk about Abstract Data Types (ADTs).
 
-## The C Programming Language
+# The C Programming Language
 
-# Types in C
+## Types in C
 
 In C, every variable, function argument, and function return value needs to have a declared type. One of the basic types in C is `int`, which refers to a positive, zero, or negative integer. The following bit of code uses the `int` type to define a function that takes an `int` argument, has two local `int` variables, and returns an `int` value.
 
@@ -23,7 +23,7 @@ int sum(int n) {
 }
 ```
 
-# Scope
+## Scope
 
 You can also write the above function like this:
 
@@ -49,7 +49,7 @@ TEST(MyTest, LocalTwo) {
 }
 ```
 
-# The void type
+## The void type
 
 In C, an object with type `void` has no value. Usually we use `void` to refer to functions that do not return anything, such as
 
@@ -62,7 +62,7 @@ void say_hello() {
 
 Note that you cannot declare a variable of type `void`.
 
-# Basic Types
+## Basic Types
 
 The following code demonstrates most of the basic integer types in C along with some initializations showing what sorts of values they take. Note that character values such as `'a'`, `'b'` and `'c'` are shorthand for ASCII integer values, in this case `97`, `98`, and `99`.
 
@@ -84,7 +84,7 @@ To see how many bytes a type has, you can use the `sizeof` function, as in
 printf("The size of an int on this machine is %d\n", sizeof(int));
 ```
 
-# Float Types
+## Float Types
 
 In addition , the following floating point types are available:
 
@@ -96,7 +96,7 @@ long double z;           /* sixteen bytes, 19 decimal places */
 
 You trade storage space and speed as you increase the size of these types.
 
-# Limits
+## Limits
 
 The minimum and maximum values of variables with these types for the particular C implemtation you are working with are noted in the `<limits.h>` header file. If you include this header in a source file, open the file with Visial Studio Code, and follow its definition, you'll see all sorts of C pre-processor macros defining limits. To use the definitions, for example, do:
 
@@ -116,7 +116,7 @@ The minimum value of INT = -2147483648
 The maximum value of INT = 2147483647
 ```
 
-# Modifiers: `register`
+## Modifiers: `register`
 
 This keyword is used to strongly suggest to the compiler that the variable should be stored in a register instead of in RAM. You would do something like this:
 
@@ -131,7 +131,7 @@ void f(int x) {
 
 However, most compilers know how to figure out when to use a register for a counter without the `register` keyword, so you will almost never need to use this modifer.
 
-# Modifiers: `volatile`
+## Modifiers: `volatile`
 
 This keyword is used to refer to locations in memory that might change do to something happening outside of the code. It prevents the compiler from assuming that a volatile variable that is assigned only once in the code will never change and subsequently optimizing it out of existence. For example, on an embedded device, if you know that location 0x5555 was a globally available register being written to by, for example, a sensor or interrupt handler, then you could do
 
@@ -148,7 +148,7 @@ voif f() {
 }
 ```
 
-# Modifiers: `static`
+## Modifiers: `static`
 
 A static variable is one that preserves its value even after it has gone out of scope. For example, compare the following two functions
 
@@ -169,7 +169,7 @@ int g() {
 
 If you call `f` twice in a row, you will get the value `1` each time. If you call `g` twice in a row, you will get `1` the first time and `2` the second time. Thus, the function `g` is using `x` as local storage. It initializes the variable the first time it is called, but does not reinitialize it upon subsequent calls to the function.
 
-# Modifiers: `static` within a File
+## Modifiers: `static` within a File
 
 The `static` keyword is also used in a _totally different way_ to declare variables and functions as local to the file in which they are defined. If a function is defined without static, as in
 
@@ -189,7 +189,7 @@ static int f(int x) {
 
 If you put this in a file called `my_source.c`, then only codw within `my_source.c` can use the function `f`. This is a way to make private functions that you do not want users of an API to access.
 
-# Modifiers: `const`
+## Modifiers: `const`
 
 This keyword is used in variable declarations to make symbols that refer to constants. For example
 
@@ -214,7 +214,7 @@ and a pointer to a constant value with
 const int * ptr;
 ```
 
-# Modifiers: `const` Arguments
+## Modifiers: `const` Arguments
 
 If you have a function that takes a pointer to a value and want to enforce that the function does not modify the value pointed to, then you would define the argument to the function as follows:
 
@@ -242,11 +242,11 @@ Compiling this code gives the error
     ^
 ```
 
-# Modifiers: `extern`
+## Modifiers: `extern`
 
 This keyword is used in certain circumstances to declare functions without defining them, and to tell the compiler to go ahead and link your code expecting that the function will be defined somewhere else. We will likely not need it, although you will see it a lot in header files we include.
 
-# Structures
+## Structures
 
 A structure in C is like a record or dictionary in other languages. It is a way to define a new type of object to store information that belongs together. For example, you might use the following structure to keep track of the information associated with a new data type you are defining,called point, and then declare some points.
 
@@ -265,7 +265,7 @@ struct {
 } p, q;
 ```
 
-# Typedef with `struct`
+## Typedef with `struct`
 
 If you would like to avoid having to write `struct point` over and over, you can also make a type definition as in the following example:
 
@@ -287,7 +287,7 @@ Point q = { 1.0, 2.0, 3.0 };
 
 The order in which the members of the struct were declared determines the order in which the initializers should appear.
 
-# Unions
+## Unions
 
 A `union` is like a `struct`, but with all members using the same memory location. A `union` allows you to use only **one** of the members of the union at the same time. For example,
 
@@ -302,7 +302,7 @@ Thing t;
 
 In this case, the addresses in memory of `t.x`, `t.y` and `t.z` are all the same. If we replaced the above with a `struct`, they would all be different.
 
-# Enums
+## Enums
 
 An `enum` is a way to enumerate the possible values a variable might have. For example
 
@@ -533,7 +533,7 @@ When you declare a string within a scope, its memory is allocated for the durati
 - The `rpn_pop` method pops the top value off the stack and returns it.
 - The `rpn_free` method should free the memory used by the rpn, and un-initialized it.
 
-# Dealing With Errors
+## Dealing With Errors
 
 Your user's may not always treat your RPN Calculator correctly, so you should look out for runtime errors.
 
@@ -555,13 +555,13 @@ To develop a library like this, we will follow the following procedure:
 3. Define tests that should pass
 4. Keep refining the source code until all the tests pass
 
-# Directory Structure
+## Directory Structure
 
 Copy the template directory in week_2.
 
 Change names from `example` to `rpn`.
 
-# Function Declarations
+## Function Declarations
 
 Put this code in `rpn.h`
 
@@ -593,7 +593,7 @@ void rpn_free();
 #endif
 ```
 
-# Function Definitions
+## Function Definitions
 
 Put this code in `rpn.c`
 
@@ -610,7 +610,7 @@ RPN_ERROR rpn_error() { return OK; }
 void rpn_free() {}
 ```
 
-# Basic Test File
+## Basic Test File
 
 ```c
 #include "gtest/gtest.h"
@@ -635,7 +635,7 @@ GTEST_API_ int main(int argc, char **argv) {
 }
 ```
 
-# Example Test
+## Example Test
 
 ```c
 TEST(RPN,Arithmetic {
@@ -653,7 +653,7 @@ TEST(RPN,Arithmetic {
 
 See the `rpn_3` directory for a full set of tests.
 
-# Developing Code
+## Developing Code
 
 0. Fill in functionality, assuming user does the right thing.
 1. Create tests for catching errors.
@@ -662,7 +662,7 @@ See the `rpn_3` directory for a full set of tests.
 
 See the `rpn_3` directory for a complete implementation.
 
-## Abstract Data Type (ADT)
+# Abstract Data Type (ADT)
 
 An _Abstract Data Type_ (ADT) is a set of values and methods or operations that operate on those values. The interface to an ADT defines only how to build values and operate on them, but not how memory is allocated or how the operations are performed. ADTs are extremely useful to programmers. They allow you to
 
