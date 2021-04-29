@@ -333,7 +333,7 @@ TEST(DoubleArray, Construction) {
 
 Notice that we do not have to explicitly delete `a` and `b` when we are done with them. This is because when they go out of scope, C++ will automatically call the method `~DoubleArray`, which is specially named with the `~` to let C++ know to call it whenever it needs to delete a `DoubleArray`.
 
-# Allcating new Objects
+# Allocating new Objects
 
 On the other hand, we still need to use `delete` if we happened to use `new` to allocate a `DoubleArray`. For example,
 
