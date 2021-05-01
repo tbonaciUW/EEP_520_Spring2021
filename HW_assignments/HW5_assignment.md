@@ -29,7 +29,7 @@ public:
 
     // Getters
     ElementType &get(int index);
-    ElementType &safe_get(int index) const;         // This is new. See below.
+    ElementType &safe_get(int index) const;         // This is new. See Lecture5_Readme.md for a refresher.
     int size() const;
 
     // Setters
