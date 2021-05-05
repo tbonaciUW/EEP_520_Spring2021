@@ -26,22 +26,21 @@ enviro
 
 to see to what extend you got the behavior to work. You are, of course, welcome to try more than one problem.
 
-Note: below is a list of suggestions for your project that build upon material covered starting with _week 7_. However, anything similar to the ideas below are fine. You could, for example, create a video game, or a more realistic simulation of an actual robot, etc.
-
-1. Using static elements, create a _maze like environment_.
+1. *Project optiona 1*: Using static elements, create a _maze like environment_.
    1. Put a robot at the start and have it explore until it finds the end of the maze. Use range sensors, wall following behaviors, and perhaps some kind of memory of where the robot has been.
    2. Next, extend or improve the maze environment example. For example, use more complicated mazes. Generate random mazes. Build a map of the environment and navigate within it.
-1. Place a grid of about 20 blocks all over the arena.
+1. *Project option 2:* Place a grid of about 20 blocks all over the arena.
    1. Create two robots each of which attempts to sweep the blocks to their respective sides of the field. You may want to change the shape of the robot from what we used in class so that it can better push blocks around.
    2. Next, extend or improve the blocks sweeping example. For example:
       1. Have blocks disappear once deposited in a specific place.
       2. Make new blocks periodically. Use more varied sizes and shapes.
       3. Have robots collaborate.
       4. Include obstacles in the environment.
-1. Make a robot that moves around the arena in long, looping path. Call this robot the `Leader`.
+1. *Project option 3:* Make a robot that moves around the arena in long, looping path. Call this robot the `Leader`.
    1. Create a `Follower` robot that uses a range finder to stay a respectful distance behind the leader.
    2. Next, add more `Follower` robots to create a train of robots.
    3. Extend or improve the example in which a robot moves around the arena with robots following it. Create a longer train of robots. Create flocking behaviors, and so on.
+1. *Project option 4*: above is a list of three suggestions for your project that build upon material covered starting with _week 7_. However, anything similar to the ideas below are fine. You could, for example, create a video game, or a more realistic simulation of an actual robot, etc. *If you choose project option 4, and decide to do something else, of your choosing, please send a note (private Piazza post, or an email) to Tamara by 11:59pm on Sunday, May 23rd to let Tamara know what you are planning to work on. Your description can be short - just describing the two or three main steps you are hoping to accomplish in your project.
 
 # Project Rubric
 
