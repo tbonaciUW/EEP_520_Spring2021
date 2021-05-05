@@ -40,7 +40,7 @@ to see to what extend you got the behavior to work. You are, of course, welcome 
    1. Create a `Follower` robot that uses a range finder to stay a respectful distance behind the leader.
    2. Next, add more `Follower` robots to create a train of robots.
    3. Extend or improve the example in which a robot moves around the arena with robots following it. Create a longer train of robots. Create flocking behaviors, and so on.
-1. *Project option 4*: above is a list of three suggestions for your project that build upon material covered starting with _week 7_. However, anything similar to the ideas below are fine. You could, for example, create a video game, or a more realistic simulation of an actual robot, etc. *If you choose project option 4, and decide to do something else, of your choosing, please send a note (private Piazza post, or an email) to Tamara by 11:59pm on Sunday, May 23rd to let Tamara know what you are planning to work on. Your description can be short - just describing the two or three main steps you are hoping to accomplish in your project.*
+1. *Project option 4*: above is a list of three suggestions for your project that build upon material covered starting with _week 7_. However, anything similar to the ideas below are fine. You could, for example, create a video game, or a more realistic simulation of an actual robot, etc. *If you choose project option 4, and decide to do something else, of your choosing, please send a note (private Piazza post, or an email to Trubng and Tamara) by 11:59pm on Sunday, May 23rd to let us know what you are planning to work on. Your description can be short - just describing the two or three main steps you are hoping to accomplish in your project.*
 
 # Project Rubric
 
