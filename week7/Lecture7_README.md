@@ -1,8 +1,6 @@
 # Software Engineering For Embedded Applications
 
-===
-
-## Week 6 (May 12, 2021): Event Loop Management
+## Week 7 (May 12, 2021): Event Loop Management
 
 ---
 
