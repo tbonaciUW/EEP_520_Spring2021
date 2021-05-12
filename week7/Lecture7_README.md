@@ -218,6 +218,7 @@ m.erase(m.begin());
 More information about map containers can be found [here](http://www.cplusplus.com/reference/map/map/).
 
 ---
+# Event Loop Management
 
 Many embedded systems run _event loops_, which are essentially endless while loops of the following form:
 
