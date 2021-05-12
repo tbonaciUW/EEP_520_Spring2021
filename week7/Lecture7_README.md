@@ -190,7 +190,7 @@ Some implementations of Javascript actually look something like this for arrays.
 
 # Map Iterators
 
-You can iterate through the keys and values of a `map` with iterators. The order in which the iterators visit the elements of the map is not guaranteed, so do not depend on it. For example, using the definition of `m` above,
+You can iterate through the keys and values of a `map` with iterators. The order in which the iterators visit the elements of the map is not guaranteed, so do not depend on it. For example, using the definition of `person` above,
 
 ```c++
 for(auto i = person.begin(); i != person.end(); i++) {
