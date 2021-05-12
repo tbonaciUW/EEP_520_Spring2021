@@ -2,7 +2,7 @@
 
 ## Week 7 (May 12, 2021): Event Loop Management
 
-# Review: Overloading "=", a.k.a. the Assignment Operator
+### Review: Overloading "=", a.k.a. the Assignment Operator
 
 ```c++
 DoubleArray& DoubleArray::operator=(const DoubleArray& other) {
@@ -25,7 +25,7 @@ This method uses the keyword `this`, which refers to the object being operated o
 
 Also note that the method accesses the private members of `other`, which is okay because this is a class method.
 
-# Review: Returning Referenes
+### Review: Returning Referenes
 
 Finally, notice that the method returns a reference to the result of the copy. This is actually not needed to assign the left hand side (that's done in the body of the method), but is needed because an expression like `y=x` itself has a value, which should be a reference to `y`. This is so you can do things like
 
