@@ -2,6 +2,46 @@
 
 ## Week 7 (May 12, 2021): Event Loop Management
 
+# Review: Overloading "=", a.k.a. the Assignment Operator
+
+```c++
+DoubleArray& DoubleArray::operator=(const DoubleArray& other) {
+    if ( this != &other) {
+        delete[] buffer; // don't forget this or you'll get a memory leak!
+        buffer = new double[other.capacity]();
+        capacity = other.capacity;
+        origin = other.origin;
+        end = origin;
+        for ( int i=0; i<other.size(); i++) {
+            set(i,other.get(i));
+        }
+    }
+    return *this;
+}
+```
+
+Think of this code as defining a method called `=` that would be called with `set y to be =(x)` (psuedocode).
+This method uses the keyword `this`, which refers to the object being operated on. In our C array class, we passed a pointer (usually called `da`) to the object as the first argument to every function. In C++ the pointer is implicit, but can be access if needed with `this`. In the above code, `this` refers to the assignee (the left hand side of `y=x`) and `other` refers to the object being copied. Thus, the first line checks that these two are not the same (if they are, there is nothing to do -- although you could leave this out and truely make a copy).
+
+Also note that the method accesses the private members of `other`, which is okay because this is a class method.
+
+# Review: Returning Referenes
+
+Finally, notice that the method returns a reference to the result of the copy. This is actually not needed to assign the left hand side (that's done in the body of the method), but is needed because an expression like `y=x` itself has a value, which should be a reference to `y`. This is so you can do things like
+
+```c++
+y = x = z;
+```
+
+which is equivalent to
+
+```c++
+y = (x = z);
+```
+
+Returning a reference to `*this` is called _method chaining_.
+
+
 ---
 
 Many embedded systems run _event loops_, which are essentially endless while loops of the following form:
