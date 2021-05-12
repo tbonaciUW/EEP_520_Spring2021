@@ -240,7 +240,7 @@ Starting this week, we will be building an _Event Loop MAnager_ called _elma_, w
 - Communicating among processes with _channels_
 - Communicating among processes with _events_ (next week).
 
-Note that _elma_ is a completely new project, being developed by and for this course. Thus, it will have bugs, missing features, poor documentation, and low test coverage. However, we as a class will be building _elma_ week by week.
+Note that _elma_ is a new project being developed by and for this course. Thus, it will have bugs, missing features, poor documentation, and low test coverage. However, we as a class will be building _elma_ week by week.
 
 # Getting Elma
 
