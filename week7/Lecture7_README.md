@@ -42,6 +42,190 @@ y = (x = z);
 Returning a reference to `*this` is called _method chaining_.
 
 
+# Lambda Expressions
+
+You can define functions as in two ways in C++. The first is the standard way, as in this example which squares its argument
+
+```c++
+double square(double x) {
+    return x*x;
+}
+```
+
+The other is with what are called `lambda` expressions, named after the _lambda calculus_ invented by Alonzo Church in the 1930s as a way to capture the essence of computation mathematically. A lambda expression defining the same function as above is:
+
+```c++
+[](double x) { return x*x; }
+```
+
+It is the same function, but it doesn't have a name. You can use evaluate lambda expressions by applying them like functions, as in:
+
+```c++
+([](double x) { return x*x; })(3.0); // 9.0
+```
+
+or you can set a variable equal to a lambda expression, and apply it later, as in
+
+```c++
+auto square = [](double x) { return x*x; }
+square(3.0); // 9.0
+```
+
+# Using Lambdas with Generic Algorithms
+
+Lambdas becomes useful when using generic algorithms, such as `transform`, which take functions as arguments:
+
+```c++
+vector<int> v = { 1, 2, 3, 4, 5 };
+transform(
+    v.begin(),    // start of elements to transform
+    v.end(),      // end of elements to transform
+    v.begin(),      // start of where to put elements to transform
+    [](double x) { return x*x; }
+);
+```
+
+Note that lambda expressions do not return function pointers. Rather, they return function _objects_, which are instantiations of a _function_ class which overrides the `()` application operator.
+
+# Capturing Variables
+
+The square brackets of a lambda expression can list variables to _capture_ from the surrounding scope. For example, if we define a function like this:
+
+```c++
+void add_to_all(vector<int> &v, int x) {
+    transform(
+        v.begin(),
+        v.end(),
+        v.begin(),
+        [](int y) { return x+y; } // WRONG!
+    );
+}
+```
+
+the C++ compiler will complain that the lambda expression does not have access to the variable `x` in its scope. We can fix this by _capturing_ `x` as follows:
+
+```c++
+void add_to_all(vector<int> &v, int x) {
+    transform(
+        v.begin(),
+        v.end(),
+        v.begin(),
+        [x](int y) { return x+y; } // RIGHT!
+    );
+}
+```
+
+# Callbacks
+
+Sometimes you want to send a function to another function. For example, you might do
+
+```c++
+sleep_then(10, []() { cout << "Ten seconds have passed\n"; });
+cout << "I am waiting\n";
+```
+
+If the sleep function executes in another thread waiting for ten seconds and then running its callback, then you would get the output:
+
+```
+I am waiting
+Ten seconds have passed
+```
+
+We will get to code like this in a few weeks.
+
+# Example Lambda as Argument
+
+```c++
+std::vector<int> map(std::vector<int> v, std::function< int(int) > f) {
+    std::vector<int> result;
+    for ( auto x : v ) {
+        result.push_back(f(x));
+    }
+    return result;
+}
+
+TEST(Lambda, Argument) {
+    std::vector<int> v = { 1,2,3,4,5 };
+    auto f = [](int x) { return x*x; };
+    std::vector<int> u = map(v, f);
+    for ( auto x : u ) {
+        std::cout << x << " ";
+    }
+    std::cout << "\n";
+}
+```
+
+# Using Templates for Function Arguments
+
+template<typename FunctionType>
+...
+
+# More Info
+
+Further reading on lambda expressions can be found [here](https://docs.microsoft.com/en-us/cpp/cpp/lambda-expressions-in-cpp?view=vs-2017).
+
+# Associative Containers
+
+Associative containers are different from sequential containers in that they index the container with keys, kind of like a `struct`, dictionary, or database. The associative containers defined in the STL are 'map', 'set', 'multimap', and 'multiset'. We will focus here on 'map', which can be used to illustrate the main features.
+
+In a `map`, a set of keys are used to index a set of values. For example, you might define a `map` as follows:
+
+```c++
+   map<string,string> person;
+   person["First"] = "Alan";
+   person["Last"] = "Turing";
+   person["job"] = "Code breaker";
+```
+
+Note that the `map` template takes two types, the key type and the value type. They do not have to be the same:
+
+```c++
+    map<string, vector<int>> sequence;
+    sequence["ints"] = { 1, 2, 3, 4, 5, 6 };
+    sequence ["squares"] = { 1, 4, 9, 16, 25, 36 };
+    sequence["fib"] = { 1, 1, 2, 3, 5, 8, 13 };
+```
+
+or another (inefficient) way to make an array of doubles
+
+```c++
+map<unsigned int, double> a;
+a[0] = 123;
+a[5] = 34;
+int x = a[3]; // 0. Non-existent keys map to default values of the value type
+```
+
+Some implementations of Javascript actually look something like this for arrays.
+
+# Map Iterators
+
+You can iterate through the keys and values of a `map` with iterators. The order in which the iterators visit the elements of the map is not guaranteed, so do not depend on it. For example, using the definition of `m` above,
+
+```c++
+for(auto i = person.begin(); i != person.end(); i++) {
+    cout << (*i).first << ": " << (*i).second << "\n";
+}
+```
+
+which can also be written
+
+```c++
+for(auto i = person.begin(); i != person.end(); i++) {
+    cout << i->first << ": " << i->second << "\n";
+}
+```
+
+When you dereference an iterator in a `map` you get a `pair` object (also defined by the STL). It will have the same types as the map. In the above example, `*i` as the type `pair<string,string>`. The pair object has a `first` and `second` field that references to the actual key and value of the map to which the iterator refers.
+
+You can erase key/value pairs from a map using either keys or iterators.
+
+```c++
+m.erase("First");
+m.erase(m.begin());
+```
+
+More information about map containers can be found [here](http://www.cplusplus.com/reference/map/map/).
+
 ---
 
 Many embedded systems run _event loops_, which are essentially endless while loops of the following form:
