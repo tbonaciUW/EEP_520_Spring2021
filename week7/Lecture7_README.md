@@ -5,6 +5,9 @@
 ### Review: Overloading "=", a.k.a. the Assignment Operator
 
 ```c++
+DoubleArray a, b;
+a = b;
+
 DoubleArray& DoubleArray::operator=(const DoubleArray& other) {
     if ( this != &other) {
         delete[] buffer; // don't forget this or you'll get a memory leak!
