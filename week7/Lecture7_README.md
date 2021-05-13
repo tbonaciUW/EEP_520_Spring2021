@@ -6,7 +6,7 @@
 
 ```c++
 DoubleArray a, b;
-a = b;
+a = b; a.assign(b);
 
 DoubleArray& DoubleArray::operator=(const DoubleArray& other) {
     if ( this != &other) {
