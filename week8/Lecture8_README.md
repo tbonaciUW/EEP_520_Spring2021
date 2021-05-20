@@ -16,9 +16,16 @@ This week we will
 
 The resulting structure looks like the above. Orange indicates classes that we will define today.
 
-# Elma Changes
+# Review
 
-Please restart your docker container with something like
+Last week, we started building an _Event Loop MAnager_ called _elma_, which includes (or will include), support for:
+
+- Defining modular processes
+- Scheduling a process to run at a desired frequency
+- Communicating among processes with _channels_
+- Communicating among processes with _events_.
+
+Please start your docker container with something like
 
 ```bash
 docker pull klavins/elma:latest
@@ -28,6 +35,230 @@ which should download the latest version from DockerHub, before doing
 
 ```bash
 docker run -v $PWD:/source -it klavins/elma:latest bash
+```
+
+# Time and Ratios
+
+One of the big problems in code that uses time is that it is hard to remember (and for others to figure out) what units of time you are using at any given point in the code. This is because if you represent a time point or a duration as an integer, there is no associated information about what the units are.
+
+The [chrono](http://www.cplusplus.com/reference/chrono/) library solves this with a new templated class called `duration`, which in turn uses `ratio`.
+
+A `std::ratio` allows you to represent constant ratios as types. For example, to representation the ratio two thirds, you would write
+
+```c++
+#include <ratio>
+typedef std::ratio<2,3> two_thirds;
+std::cout << two_thirds::num << "/" <<two_thirds::den << "\n";
+```
+
+Built into the library are a number of predefined ratios, such as `std::milli` or `std::kilo`, which represent the ratios 1:1000 and 1000:1 respectively.
+
+# Durations
+
+A `std::duration` is a time span template that takes a `count` type and a `period` ratio (in seconds). For example, a millisecond duration type is defined by
+
+```c++
+typedef std::chrono::duration<int,std::milli> milliseconds_type;
+```
+
+which specifies that a value of type `milliseconds_type` will give you a duration in milliseconds accurate to 1/1000 of a second as an integer. You can make a duration of 10ms as follows:
+
+```c++
+auto x = milliseconds_type(10);
+```
+
+You can convert to a different representation by sending a duration to the constructor of another duration. For example, to express 10ms in seconds (as 0.01s), you can do
+
+```c++
+typedef std::chrono::duration<double,std::ratio<1,1>> seconds_type;
+auto y = seconds_type(x);
+std::cout << "ten ms = " << x.count() << "ms\n"; // prints 10 ms
+std::cout << "ten ms = " << y.count() << "s\n";  // prints 0.01s
+```
+
+Note that we can't print a `duration` directly, as it is a complex type. Instead, we call the `count()` method, which returns the number of periods in the duration. The number of periods is, of course, dependent on the size of the period.
+
+# Duration Arithmetic
+
+Durations have standard arithmetic defined on them. The result of adding two durations is to get, not surprisingly, the sum of the durations. For example, the expression
+
+```c++
+auto z = x+y; // 20 ms
+```
+
+adds the two durations together to get a new duration. Note that in this case `x` and `y` have different period sizes and counts. According to the specification, "when two duration objects of different types are involved, the one with the longest period (as determined by common_type) is converted before the operation." Thus, y is converted to `milliseconds_type` and then added to `x` to get `z`.
+
+# Zero
+
+There is a special duration, zero, which can be used as follows:
+
+```c++
+auto z = seconds_type::zero();
+```
+
+or
+
+```c++
+auto another_z = milliseconds_type::zero();
+```
+
+# Elma's timing needs
+
+The goal is for _elma_ to manage when processes execute at approximately millisecond resolution, and allow them to specify when things should happen. Thus, we will need to
+
+- Know what time it is
+- Add and subtract times
+- Convert between different units of time
+
+# Clocks and Timepoints
+
+So that we know what time it is, the `chrono` library provides several clocks. We will use the `high_resolution_clock`, which on most systems will have a resolution of one nanosecond. To get the current time with the clock, you write
+
+```c++
+using namespace std::chrono;
+high_resolution_clock::time_point t = high_resolution_clock::now();
+```
+
+In this case, `t` represents the current time, but it isn't much of use, unless you use it relative to some other time. For example, you can ask for the amount of time since 1970 (known as the beginning of time for computers) via:
+
+```c++
+std::cout << t.time_since_epoch().count() << " ns since 1970\n";
+typedef duration<double,std::ratio<3600*24*365,1>> years;
+auto y = years(t.time_since_epoch());
+std::cout << y.count() << " years since 1970\n";
+```
+
+which prints something like
+
+```bash
+1581621645325126700 ns since 1970
+50.1529 years since 1970
+```
+
+# Tracking Program Execution
+
+More likely, you would use time points to mark different times in the execution of a program. For example,
+
+```c++
+high_resolution_clock::time_point t1, t2;
+t1 = high_resolution_clock::now();
+f(); // a function that might take a while
+t2 = high_resolution_clock::now();
+std::cout << "f took " << (t2 - t1).count() << " ns\n";
+```
+
+Note that the "`-`" operator on `time_points` is defined to return a `duration`.
+
+# Interprocess Communication
+
+There are many ways that concurrent systems deal with process communication. Here are a few:
+
+- **Shared variables:** in some global space that all processes have access to. The downside is the lack of enforceable conventions on how variables are accessed.
+- **Events:** Processes can trigger and listen to events. Each event has associated data. Interrupts and interrupt handlers are an example. We will describe how elma does this later.
+- **Channels:** First in first out queues that let processes send data that other processes can subscribe to. This is common with embedded real time systems where, for example, a sensor is sending data continuously that other processes consume.
+
+# Channels
+
+We will start with channels. Here is a class definition.
+
+```c++
+class Channel {
+
+    public:
+
+    Channel(string name) : _name(name), _capacity(100) {}
+    Channel(string name, int capacity) : _name(name), _capacity(capacity) {}
+
+    Channel& send(double);
+    Channel& flush(double);
+    double latest();
+    double earliest();
+
+    inline int size() { return _queue.size(); }
+    inline bool empty() { return _queue.size() == 0; }
+    inline bool nonempty() { return _queue.size() > 0; }
+    inline string name() { return _name; }
+    inline int capacity() { return _capacity; }
+
+    private:
+
+    string _name;
+    int _capacity;
+    deque<double> _queue;
+
+};
+```
+
+The main data structure is the double ended queue. We will push new data onto the front of the queue, and get the data off of the back of the queue. Most processes will likely just use the latest value, but some processes might want to know many values previous, so our channel records them, up to a limit.
+
+# Channel Implementation
+
+The implementation of these methods is straightforward, and in some ways just a wrapper around the `deque`.
+
+```c++
+Channel& Channel::send(double value) {
+    _queue.push_front(value);
+    while ( _queue.size() >= capacity() ) {
+        _queue.pop_back();
+    }
+    return *this;
+}
+
+Channel& Channel::flush(double) {
+    _queue.clear();
+    return *this;
+}
+
+double Channel::latest() {
+    if ( _queue.size() == 0 ) {
+        throw std::range_error("Tried to get the latest value in an empty channel.");
+    }
+    return _queue.front();
+}
+
+double Channel::earliest() {
+    if ( _queue.size() == 0 ) {
+        throw std::range_error("Tried to get the earliest value in an empty channel.");
+    }
+    return _queue.back();
+}
+```
+
+Note that we throw exceptions if a user process tries to access an empty channel.
+
+# Adding Channels to the Manager
+
+To make channels accessible to the manager, we add a new private datum `_channels`:
+
+```c++
+map<string, Channel *> _channels;
+```
+
+and a method for adding and accessing them
+
+```c++
+Manager& Manager::add_channel(Channel& channel) {
+    _channels[channel.name()] = &channel;
+    return *this;
+}
+
+Channel& Manager::channel(string name) {
+    if ( _channels.find(name) != _channels.end() ) {
+      return *(_channels[name]);
+    } else {
+        throw std::domain_error("Tried to access an unregistered or non-existant channel.");
+    }
+}
+```
+
+# Using Channels in Processes
+
+To make channels accessible to processes, we basically just go through the `_manager_ptr` in the process:
+
+```c++
+Channel& Process::channel(string name) {
+    return _manager_ptr->channel(name);
+}
 ```
 
 # JSON
