@@ -3,10 +3,10 @@
     "type": "dynamic",
     "description": "Replace this string with a description",
     "shape": [
-        { "x": -10, "y": 10 },
-        { "x": 10, "y": 10 },
-        { "x": 10, "y": -10 },
-        { "x": -10, "y": -10 }
+        { "x": -10, "y": 0 },
+        { "x": 10, "y": 0 },
+        { "x": 0, "y": -10 },
+        { "x": 0, "y": 10 }
     ],
     "friction": {
       "collision": 5,

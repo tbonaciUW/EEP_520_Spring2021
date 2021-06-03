@@ -2,7 +2,7 @@
 
 ===
 
-## Week 10 (June 2, 2021): Networkingbb
+## Week 10 (June 2, 2021): Networking
 
 # Internet Protocols
 
@@ -108,7 +108,7 @@ An incredibly useful tool installed on pretty much any unix like environment (in
 curl https://www.google.com
 ```
 
-will return the httmp for Google's main page.
+will return the http for Google's main page.
 
 You can also do a POST request, as in
 

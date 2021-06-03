@@ -7,7 +7,7 @@
     "agents": [
         {
             "definition": "defs/wanderer.json",
-            "style": { "fill": "lightgreen", "stroke": "black" },
+            "style": { "fill": "blue", "stroke": "black" },
             "position": {
                 "x": 100, 
                 "y": 0, 
@@ -16,7 +16,7 @@
         },
         {
             "definition": "defs/wanderer.json",
-            "style": { "fill": "lightgreen", "stroke": "black" },
+            "style": { "fill": "yellow", "stroke": "black" },
             "position": {
                 "x": -100, 
                 "y": 0, 
@@ -25,7 +25,7 @@
         }, 
         {
             "definition": "defs/wanderer.json",
-            "style": { "fill": "lightgreen", "stroke": "black" },
+            "style": { "fill": "pink", "stroke": "black" },
             "position": {
                 "x": 0, 
                 "y": 100, 
@@ -34,7 +34,7 @@
         },    
         {
             "definition": "defs/wanderer.json",
-            "style": { "fill": "lightgreen", "stroke": "black" },
+            "style": { "fill": "purple", "stroke": "black" },
             "position": {
                 "x": 0, 
                 "y": -100, 
@@ -43,7 +43,7 @@
         },   
         {
             "definition": "defs/wanderer.json",
-            "style": { "fill": "lightgreen", "stroke": "black" },
+            "style": { "fill": "green", "stroke": "black" },
             "position": {
                 "x": 50, 
                 "y": -100, 
@@ -52,7 +52,7 @@
         },   
         {
             "definition": "defs/wanderer.json",
-            "style": { "fill": "lightgreen", "stroke": "black" },
+            "style": { "fill": "red", "stroke": "black" },
             "position": {
                 "x": 50, 
                 "y": 100, 

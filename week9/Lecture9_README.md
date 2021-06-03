@@ -10,6 +10,298 @@ Last week we learned:
 
 This week, we apply our skills to building robot control systems using a new multi-robot simulation environment, called ENVIRO, build on top of ELMA.
 
+# Review: Events and Event Methods
+
+An _event_ is a discrete occurrence that happens at a specific point in time. For example, a touch sensor might go from off to on, or a user might press a button. Events often have data associated with them. For example, how hard was the button pressed? To capture an event formally, we define a new class:
+
+```c++
+class Event {
+
+    public:
+
+        Event(std::string name, json value) : _name(name), _value(value), _empty(false) {}
+        Event(std::string name) : _name(name), _value(0), _empty(true) {}
+
+    private:
+    std::string _name;
+    json _value;
+    bool _empty; // used when no value is needed or provided
+
+};
+```
+To use an event, processes need to be able to
+
+- **emit** an event, giving it a name in the process. The result should be that the manager broadcasts the occurence of the event to any other processes that are watching for it.
+- **watch** for events with a specific name, responding to them with user defined functions.
+
+# Keeping Track of Events in the Manager
+
+To the `Manager` we add a private data member
+
+```c++
+// manager.h
+private:
+map<string, vector<std::function<void(Event&)>>> event_handlers;
+```
+
+# Review: Watching Events
+
+Next we add a `watch` method to Manager and a wrapper for it to `Process`.
+
+```c++
+// manager.cc
+Manager& Manager::watch(string event_name, std::function<void(Event&)> handler) {
+    event_handlers[event_name].push_back(handler);
+    return *this;
+}
+
+// process.cc
+void Process::watch(string event_name, std::function<void(Event&)> handler) {
+    _manager_ptr->watch(event_name, handler);
+}
+```
+
+Typically, processes should set up event handlers in their `init` methods. For example, you could do
+
+```c++
+// Cruise control process watching for desired speed events from the driver
+void CruiseControl::init() {
+    watch("desired speed", [this](Event& e) {
+        desired_speed = e.value();
+    });
+}
+```
+This method would be used by a `CruiseControl` process to respond to an event changing its desired speed. Note that the lambda sent to the event captures `this`, so that the variable `desired_speed` that is private to the CruiseControl object can be accessed.
+
+# Review: Emitting an Event
+
+To emit an event, we define a `Manager` method and a `Process` wrapper that searches the event handler list for handlers that correspond to the emitted event.
+
+```c++
+// Manager.cc
+Manager& Manager::emit(const Event& event) {
+    Event e = event; // make a copy so we can change propagation
+    if ( event_handlers.find(event.name()) != event_handlers.end() ) {
+        for ( auto handler : event_handlers[event.name()] ) {
+            handler(e);
+        }
+    }
+    return *this;
+}
+
+// Process.cc
+void Process::emit(string event_name, const Event& event) {
+    _manager_ptr->emit(event_name, event);
+}
+```
+
+A process would typically emit an event in its `start`, `update`, or `stop` method.
+
+For example, suppose you wanted to simulate a driver with a `Driver` process.
+
+```c++
+void Driver::start() {
+    emit(Event("desired speed", 40));
+}
+```
+
+When this process is started, it will emit the event, which the cruise control process will respond to.
+
+# Event Propagation
+
+The way we currently have event manager defined, every handler that watches for events with a particular name will get run every time an event with that name is emitted. This may not be desired in some cases. For example, you may want that certain events take priority and prevent other handlers from being run. To get this behavior, we introduce _event propagation_.
+
+# Changing Event Propagation
+
+To the event class, we add a Boolean value to keep track of whether the event should be propagated.
+
+```c++
+// event.h
+private:
+bool _propagate;
+```
+
+as well as the methods:
+
+```c++
+// event.h
+inline bool propagate() const { return _propagate; }
+inline void stop_propagation() { _propagate = false; }
+inline void reset() { _propagate = true; }
+```
+
+# Managing Propagation
+
+In the manager, we can then prevent events from propagating if their `_propgate` instance variable is set to true as follows:
+
+```c++
+Manager& Manager::emit(const Event& event) {
+    Event e = event; // new: make a copy so we can change propagation
+    if ( event_handlers.find(event.name()) != event_handlers.end() ) {
+        for ( auto handler : event_handlers[event.name()] ) {
+            if ( e.propagate() ) { // new
+                handler(e);
+            }
+        }
+    }
+    return *this;
+}
+```
+
+This capability will become particularly useful in the next section on finite state machines.
+
+# Finite State Machines
+A finite state machine, or FSM, is a fundamental object in embedded systems. They consist of a set of states and a set of labeled transitions between states. Here is a simple example of a toggle switch.
+
+<img src='https://raw.githubusercontent.com/klavins/EEP520-W20/master/week_7/images/toggle-switch.png' width=70%>
+
+There are two states, `Off` and `On`. The FSM moves from one state to the other, every time a 'switch' input is recieved.
+
+# Microwave Example
+
+Another example is a microwave oven controller, which is designed to accept user input and keep the user from doing something bad (like tuning on the microwave when the door is open).
+
+<img src="https://raw.githubusercontent.com/klavins/EEP520-W20/master/week_7/images/microwave.png" width="500"></image>
+
+To implement FSMs in Elma, we will add three new classes: `State`, `Transition`, and `StateMachine`. The first is an abstract base class that users will override with their own state definitions. Transition is a container class that holds a source and desintation state and an event name. StateMachine will inherit from `Process` and will manager transitions.
+
+# States
+
+To represent states, we add the new class:
+
+```c++
+class State {
+
+    friend class StateMachine;
+
+    public:
+    State();
+    State(std::string name);
+
+    inline std::string name() { return _name; }
+    virtual void entry(Event& e) = 0;
+    virtual void during() = 0;
+    virtual void exit(Event& e) = 0;
+
+    void emit(const Event& e);
+
+    private:
+    std::string _name;
+    StateMachine * _state_machine_ptr;
+
+};
+```
+
+# Transitions
+
+To represent transitions, we add the new class:
+
+```c++
+class Transition {
+
+    public:
+    Transition(std::string event_name, State& from, State& to) :
+        _from(from),
+        _to(to),
+        _event_name(event_name) {}
+
+    inline State& from() const { return _from; }
+    inline State& to() const { return _to; }
+    inline string event_name() const { return _event_name; }
+
+    private:
+    State& _from;
+    State& _to;
+    string _event_name;
+
+};
+```
+
+# State Machines
+
+To represent state machines, we add the new class
+
+```c++
+class StateMachine : public Process {
+
+    public:
+    StateMachine(std::string name) : Process(name) {}
+    StateMachine() : Process("unnamed state machine") {}
+
+    StateMachine& set_initial(State& s);
+    StateMachine& add_transition(std::string event_name, State& from, State& to);
+    inline StateMachine& set_propagate(bool val) { _propagate = val; }
+
+    State& current() { return *_current; }
+
+    void init();
+    void start();
+    void update();
+    void stop();
+
+    private:
+    vector<Transition> _transitions;
+    State * _initial;
+    State * _current;
+    bool _propagate;
+
+};
+```
+
+# State Machine Initialization
+
+The class keeps track of the initial and current states as well as keeping a list of transitions. Since it inherits from `Process` and needs its `init`, `start`, `update`, and `stop` methods defined. The `init` method loops through all transitions and watches for events that trigger them.
+
+```c++
+void StateMachine::init() {
+    for (auto transition : _transitions ) {
+        watch(transition.event_name(), [this, transition](Event& e) {
+            if ( _current->id() == transition.from().id() ) {
+                _current->exit(e);
+                _current = &transition.to();
+                _current->entry(e);
+                if ( !_propagate ) { // StateMachine has a wrapper flag for
+                                     // whether it should propagate
+                    e.stop_propagation();
+                }
+            }
+        });
+    }
+}
+```
+
+# State Machine Starting and Updating
+
+The start method sets the current state to the initial state
+
+```c++
+void StateMachine::start() {
+    _current = _initial;
+    _current->entry(Event("start"));
+}
+```
+
+and the update method calls the current state's during method.
+
+```c++
+void StateMachine::update() {
+    _current->during();
+}
+```
+
+# Example: Binary Counter
+
+See the `toggle-switch/` directory for how to implement the toggle switch.
+
+<img src='https://raw.githubusercontent.com/klavins/EEP520-W20/master/week_7/images/toggle-switch.png' width=40%>
+
+# Example: Microwave Oven
+
+See the `microwave/` directory for how to implement the microwave oven.
+
+<img src="https://raw.githubusercontent.com/klavins/EEP520-W20/master/week_7/images/microwave.png" width="500"></image>
+
+
 # Introducing ENVIRO
 
 ENVIRO is a multi robot simulation environment with the following features:
@@ -70,7 +362,7 @@ src/
     Makefile
 ```
 
-Make the project and start the enviro sever as follows.
+Make the project and start the enviro server as follows.
 
 ```bash
 make
@@ -188,7 +480,7 @@ void update() {
 }
 ```
 
-The `track_velocity(v,omega)` method attempts to make the robot move at `v` units per second in the direction it is pointing while rotating at `omega` radians per second. It is implemented as a proortional controller, where the force and torque applied to the robot are
+The `track_velocity(v,omega)` method attempts to make the robot move at `v` units per second in the direction it is pointing while rotating at `omega` radians per second. It is implemented as a proportional controller, where the force and torque applied to the robot are
 
 > -K<sub>L</sub> ( v<sub>actual</sub> - v )
 
@@ -279,7 +571,7 @@ The issue: The ENVIRO code is a few thousand lines long. We don't want to have t
 
 To do this, we compile each `src/my_robot.cc` file into a `lib/my_robot.so` file -- a shared object file. In a shared object file, the addresses of all data and functions are stored relative to some starting point. When a running executable dynamically links a shared object file, it resolves those relative addresses into actual addresses.
 
-The Makefile comples shared object files using g++ as in
+The Makefile compiles shared object files using g++ as in
 
 ```bash
 g++ -std=c++17 -Wno-psabi -ggdb  -shared -fPIC -I /usr/local/src/enviro/server/include -I /usr/local/src/Chipmunk2D/include/chipmunk  my_robot.cc -o ../lib/my_robot.so
