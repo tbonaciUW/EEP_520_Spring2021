@@ -1,6 +1,5 @@
 # Software Engineering For Embedded Applications
 
-===
 
 ## Week 10 (June 2, 2021): Networking
 
