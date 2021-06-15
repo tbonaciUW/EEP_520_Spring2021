@@ -59,9 +59,9 @@ In the first directory, the `solutions.h` file will include `unit_test.h`, which
             ASSERT_EQ(x[4],10);
         }
 
-4.  Write a function called `num_occurences` that takes an array of integers, a length, and a value and returns the number of occurences of that value in the array.
+4.  Write a function called `num_occurrences` that takes an array of integers, a length, and a value and returns the number of occurrences of that value in the array.
 
-        TEST(HW2,NumInstances) {
+        TEST(HW2,NumOccurrences) {
           int a[] = { 1, 1, 2, 3, 1, 4, 5, 2, 20, 5 };
-          ASSERT_EQ(num_occurences(a,10,1), 3);
+          ASSERT_EQ(num_occurrences(a,10,1), 3);
         }
